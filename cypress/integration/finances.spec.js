@@ -1,20 +1,20 @@
 /// <reference types="cypress" />
 
-import { format } from '../support/utils'
+import { format, prepareLocalStorage } from '../support/utils'
 
 context('Dev Finances', () => {
 
     beforeEach(() => {
         
-        cy.visit('https://dev-finance.netlify.app')
-        cy.get('#data-table tbody tr').should('have.length', 0)
+        cy.visit('https://dev-finance.netlify.app', {
+            onBeforeLoad: (win) => {
+                prepareLocalStorage(win)
+            }
+        })
 
     });
 
     it('Cadastrar entradas', () => {
-
-        cy.visit('https://dev-finance.netlify.app')
-        cy.get('#data-table tbody tr').should('have.length', 0)
 
         cy.get('#transaction .button').click()
         cy.get('#description').type('Trabalho')
@@ -22,7 +22,7 @@ context('Dev Finances', () => {
         cy.get('[type=date]').type('2022-10-24')
         cy.get('button').contains('Salvar').click()
 
-        cy.get('#data-table tbody tr').should('have.length', 1)
+        cy.get('#data-table tbody tr').should('have.length', 3)
 
 
     });
@@ -35,37 +35,37 @@ context('Dev Finances', () => {
         cy.get('[type=date]').type('2022-10-24')
         cy.get('button').contains('Salvar').click()
 
-        cy.get('#data-table tbody tr').should('have.length', 1)
+        cy.get('#data-table tbody tr').should('have.length', 3)
         
     });
 
     it('Remover entradas e saidas', () => {
-
-        const entrada = 'Total'
-        const saida = 'Conta de energia'
+        //INCERÇÃO DE ITEMK POR INTEM VIA INTERFAÇE//
+        //const entrada = 'Total'
+        //const saida = 'Conta de energia'
         
-        cy.get('#transaction .button').click()
-        cy.get('#description').type(entrada)
-        cy.get('[name=amount]').type(455)
-        cy.get('[type=date]').type('2022-10-24')
-        cy.get('button').contains('Salvar').click()
+        //cy.get('#transaction .button').click()
+        //cy.get('#description').type(entrada)
+        //cy.get('[name=amount]').type(455)
+        //cy.get('[type=date]').type('2022-10-24')
+        //cy.get('button').contains('Salvar').click()
 
-        cy.get('#transaction .button').click()
-        cy.get('#description').type(saida)
-        cy.get('[name=amount]').type(-450)
-        cy.get('[type=date]').type('2022-10-24')
-        cy.get('button').contains('Salvar').click()
+        //cy.get('#transaction .button').click()
+        //cy.get('#description').type(saida)
+        //cy.get('[name=amount]').type(-450)
+        //cy.get('[type=date]').type('2022-10-24')
+        //cy.get('button').contains('Salvar').click()
 
 
         cy.get('td.description')
-          .contains(entrada)
+          .contains("Total")
           .parent()
           .find('img[onclick*=remove]')
           .click()
         
 
         cy.get('td.description')
-          .contains(saida)
+          .contains('Conta de energia')
           .siblings()
           .children('img[onclick*=remove]')
           .click() 
@@ -73,23 +73,26 @@ context('Dev Finances', () => {
         cy.get('#data-table tbody tr').should('have.length', 0)
     });
 
-    it.only('validar saldo com diversas transaçoes', () => {
-        const entrada = 'Total'
-        const saida = 'Conta de energia'
-        
-        cy.get('#transaction .button').click()
-        cy.get('#description').type(entrada)
-        cy.get('[name=amount]').type(455)
-        cy.get('[type=date]').type('2022-10-24')
-        cy.get('button').contains('Salvar').click()
+    it('validar saldo com diversas transaçoes', () => {
 
-        cy.get('#transaction .button').click()
-        cy.get('#description').type(saida)
-        cy.get('[name=amount]').type(-450)
-        cy.get('[type=date]').type('2022-10-24')
-        cy.get('button').contains('Salvar').click()
+        //INCERÇÃO DE ITEMK POR INTEM VIA INTERFAÇE//
+        //const entrada = 'Total'
+        //const saida = 'Conta de energia'
+        
+        //cy.get('#transaction .button').click()
+        //cy.get('#description').type(entrada)
+        //cy.get('[name=amount]').type(455)
+        //cy.get('[type=date]').type('2022-10-24')
+        //cy.get('button').contains('Salvar').click()
+
+        //cy.get('#transaction .button').click()
+        //cy.get('#description').type(saida)
+        //cy.get('[name=amount]').type(-450)
+        //cy.get('[type=date]').type('2022-10-24')
+        //cy.get('button').contains('Salvar').click()
         
 
+        //INCERÇÃO VIA LOGAL STORAGE//
         let incomes = 0
         let expenses = 0
         
