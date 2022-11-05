@@ -1,5 +1,7 @@
 /// <reference types="cypress" />
 
+import { format } from '../support/utils'
+
 context('Dev Finances', () => {
 
     beforeEach(() => {
@@ -71,4 +73,52 @@ context('Dev Finances', () => {
         cy.get('#data-table tbody tr').should('have.length', 0)
     });
 
+    it.only('validar saldo com diversas transaçoes', () => {
+        const entrada = 'Total'
+        const saida = 'Conta de energia'
+        
+        cy.get('#transaction .button').click()
+        cy.get('#description').type(entrada)
+        cy.get('[name=amount]').type(455)
+        cy.get('[type=date]').type('2022-10-24')
+        cy.get('button').contains('Salvar').click()
+
+        cy.get('#transaction .button').click()
+        cy.get('#description').type(saida)
+        cy.get('[name=amount]').type(-450)
+        cy.get('[type=date]').type('2022-10-24')
+        cy.get('button').contains('Salvar').click()
+        
+
+        let incomes = 0
+        let expenses = 0
+        
+        cy.get('#data-table tbody tr')
+          .each(($el, index, $list) => {
+
+            cy.get($el).find('td.income, td.expense').invoke('text').then(text =>{
+                
+                if(text.includes('-')){
+                    expenses = expenses + format(text)
+                }else{
+                    incomes = incomes + format(text)
+                }
+
+                cy.log(`entradas`,incomes)
+                cy.log(`saidas`,expenses)
+        
+            })
+                
+        })
+
+        cy.get('#totalDisplay').invoke('text').then(text => {
+
+            let formattedTotalDisplay = format(text)
+            let expectedTotal = incomes + expenses
+
+            expect(formattedTotalDisplay).to.eq(expectedTotal)
+
+        })
+
+    });
 });
